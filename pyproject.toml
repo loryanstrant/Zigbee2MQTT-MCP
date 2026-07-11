@@ -1,0 +1,40 @@
+[project]
+name = "zigbee2mqtt-mcp"
+version = "2026.7.0"
+description = "MCP server for Zigbee2MQTT, driven through the Zigbee2MQTT frontend websocket API."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "loryanstrant" }]
+keywords = ["mcp", "zigbee2mqtt", "zigbee", "home-automation", "fastmcp"]
+
+dependencies = [
+    "fastmcp>=3.4,<4",
+    "websockets>=13,<16.2",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+]
+
+[project.scripts]
+zigbee2mqtt-mcp = "zigbee2mqtt_mcp.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/loryanstrant/Zigbee2MQTT-MCP"
+Repository = "https://github.com/loryanstrant/Zigbee2MQTT-MCP"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["zigbee2mqtt_mcp"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
