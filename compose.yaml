@@ -1,0 +1,19 @@
+services:
+  zigbee2mqtt-mcp:
+    # For local/dev builds use `build: .`; deployments pin the published image.
+    image: ghcr.io/loryanstrant/zigbee2mqtt-mcp:latest
+    build: .
+    container_name: zigbee2mqtt-mcp
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      Z2M_FRONTEND_URL: ${Z2M_FRONTEND_URL:-https://zigbee2mqtt.example.com}
+      Z2M_AUTH_TOKEN: ${Z2M_AUTH_TOKEN:-}
+      Z2M_ALLOW_DESTRUCTIVE: ${Z2M_ALLOW_DESTRUCTIVE:-false}
+      MCP_TRANSPORT: http
+      MCP_HOST: 0.0.0.0
+      MCP_PORT: 8080
+      MCP_PATH: /mcp
+      MCP_ALLOWED_HOSTS: ${MCP_ALLOWED_HOSTS:-*.example.com,localhost,127.0.0.1}
+      MCP_LOG_LEVEL: ${MCP_LOG_LEVEL:-INFO}
