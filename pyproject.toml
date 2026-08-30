@@ -1,6 +1,6 @@
 [project]
 name = "zigbee2mqtt-mcp"
-version = "2026.7.0"
+version = "2026.8.0"
 description = "MCP server for Zigbee2MQTT, driven through the Zigbee2MQTT frontend websocket API."
 readme = "README.md"
 requires-python = ">=3.11"

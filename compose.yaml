@@ -7,6 +7,10 @@ services:
     restart: unless-stopped
     ports:
       - "8080:8080"
+    # Backstop, not a tuning knob: steady-state use is well under this. A limit
+    # turns any future memory regression into a loud, contained restart rather
+    # than a container quietly eating the host.
+    mem_limit: 512m
     environment:
       Z2M_FRONTEND_URL: ${Z2M_FRONTEND_URL:-https://zigbee2mqtt.example.com}
       Z2M_AUTH_TOKEN: ${Z2M_AUTH_TOKEN:-}
@@ -15,5 +19,6 @@ services:
       MCP_HOST: 0.0.0.0
       MCP_PORT: 8080
       MCP_PATH: /mcp
+      MCP_STATELESS: ${MCP_STATELESS:-true}
       MCP_ALLOWED_HOSTS: ${MCP_ALLOWED_HOSTS:-*.example.com,localhost,127.0.0.1}
       MCP_LOG_LEVEL: ${MCP_LOG_LEVEL:-INFO}

@@ -67,9 +67,25 @@ All configuration is via environment variables (see [`.env.example`](.env.exampl
 | `Z2M_ALLOW_DESTRUCTIVE` | `false` | Enable the protected management tools |
 | `MCP_TRANSPORT` | `http` | `http` (streamable HTTP) or `stdio` |
 | `MCP_HOST` / `MCP_PORT` / `MCP_PATH` | `0.0.0.0` / `8080` / `/mcp` | HTTP bind + path |
+| `MCP_STATELESS` | `true` | Build a transport per request instead of one session per client. See below |
 | `MCP_HOST_PROTECTION` | `false` | DNS-rebind Host/Origin protection: `false`, `true`, or `auto` |
 | `MCP_ALLOWED_HOSTS` | `*.strant.casa,localhost,127.0.0.1` | Host allowlist (used when protection is on) |
 | `MCP_LOG_LEVEL` | `INFO` | Log level |
+
+### Why stateless HTTP is the default
+
+A stateful streamable-HTTP session is only released when the client sends
+`DELETE /mcp`. Clients that just drop the connection instead — several gateways
+and proxies do — leave their transport resident for the life of the process, so
+memory grows without bound. In one deployment this reached 2.9 GB over 27,662
+abandoned sessions.
+
+This server keeps no per-session state (devices, groups and states all live in a
+single shared websocket client), so a fresh transport per request costs nothing
+and keeps memory flat. Stateless mode does not serve the optional server-initiated
+`GET /mcp` SSE stream and answers that method with `405`, which the MCP spec allows
+and the reference clients handle. Set `MCP_STATELESS=false` only if your client
+genuinely needs that stream — and give the container a memory limit if you do.
 
 ## Running
 

@@ -35,3 +35,10 @@ def test_host_protection_value_mapping():
     assert Settings(MCP_HOST_PROTECTION="true").host_protection_value() is True
     assert Settings(MCP_HOST_PROTECTION="AUTO").host_protection_value() == "auto"
     assert Settings().host_protection_value() is False
+
+
+def test_stateless_defaults_on_and_can_be_disabled():
+    # Stateful sessions are only reclaimed on an explicit DELETE, so the safe
+    # default is stateless.
+    assert Settings().stateless is True
+    assert Settings(MCP_STATELESS="false").stateless is False
