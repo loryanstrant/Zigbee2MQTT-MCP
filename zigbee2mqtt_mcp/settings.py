@@ -65,6 +65,18 @@ class Settings(BaseSettings):
     host: str = Field(default="0.0.0.0", validation_alias="MCP_HOST")
     port: int = Field(default=8080, validation_alias="MCP_PORT")
     path: str = Field(default="/mcp", validation_alias="MCP_PATH")
+    stateless: bool = Field(
+        default=True,
+        validation_alias="MCP_STATELESS",
+        description=(
+            "Stateless HTTP: build and dispose a transport per request instead of "
+            "retaining one session per client. Stateful sessions are only reclaimed "
+            "when a client sends DELETE, so a client that never does makes the "
+            "server grow without bound. This server keeps no per-session state, so "
+            "stateless is safe; set false only if a client needs the server-initiated "
+            "GET SSE stream (which stateless answers with 405)."
+        ),
+    )
     allowed_hosts: str = Field(
         default="*.strant.casa,localhost,127.0.0.1",
         validation_alias="MCP_ALLOWED_HOSTS",

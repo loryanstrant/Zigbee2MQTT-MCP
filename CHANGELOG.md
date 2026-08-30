@@ -3,6 +3,35 @@
 All notable changes to this project are documented here. Versions use CalVer
 (`YYYY.0M.MICRO`).
 
+## [2026.8.0] - 2026-08-30
+
+Fixes unbounded memory growth over the HTTP transport.
+
+### Fixed
+
+- **Memory leak with clients that never terminate their session.** The streamable
+  HTTP transport ran stateful, and the MCP SDK only releases a session's transport
+  when the client sends `DELETE /mcp` — never on a dropped connection. A gateway
+  that opens a fresh session per connection therefore grew the server without
+  bound; one deployment reached **2.9 GB across 27,662 retained sessions** with
+  zero DELETEs in 43 days. HTTP is now **stateless by default**, creating and
+  disposing a transport per request. Nothing is lost: all state lives in the
+  shared websocket client, not in the session. Override with `MCP_STATELESS=false`.
+- `set_device_state(wait=True)` leaked its waiter `Future` on timeout — the
+  cleanup line was a no-op expression that removed nothing. Waiters are now
+  discarded in a `finally`.
+- The per-topic state and availability caches accepted any topic as a key and
+  never dropped entries for renamed or removed devices. They are now bounded to
+  the friendly names the bridge publishes, and pruned on each roster snapshot.
+
+### Added
+
+- `MCP_STATELESS` (default `true`) to control the HTTP session model.
+- `mem_limit: 512m` in the example `compose.yaml`, as a backstop against any
+  future memory regression.
+- The startup log line now reports `stateless=…`, so the running session model
+  is visible in `docker logs`.
+
 ## [2026.7.0] - 2026-07-11
 
 Initial release.

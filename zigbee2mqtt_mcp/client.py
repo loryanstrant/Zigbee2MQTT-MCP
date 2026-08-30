@@ -58,6 +58,9 @@ class Z2MClient:
         self.definitions: dict[str, Any] = {}
         self.device_state: dict[str, Any] = {}
         self.availability: dict[str, Any] = {}
+        # friendly names published by the bridge (devices + groups). Used to keep
+        # the per-topic caches bounded to things that actually exist.
+        self._known_names: set[str] = set()
 
         # bridge/request -> bridge/response correlation
         self._txn_counter = 0
@@ -182,9 +185,11 @@ class Z2MClient:
 
         if topic == "bridge/devices":
             self.devices = payload if isinstance(payload, list) else []
+            self._prune_caches()
             self._primed.set()
         elif topic == "bridge/groups":
             self.groups = payload if isinstance(payload, list) else []
+            self._prune_caches()
         elif topic == "bridge/info":
             self.bridge_info = payload if isinstance(payload, dict) else {}
         elif topic == "bridge/state":
@@ -201,11 +206,45 @@ class Z2MClient:
             pass
         elif topic.endswith("/availability"):
             name = topic[: -len("/availability")]
-            self.availability[name] = payload
+            if self._should_cache(name):
+                self.availability[name] = payload
         else:
             # a device state update, keyed by friendly name
-            self.device_state[topic] = payload
+            if self._should_cache(topic):
+                self.device_state[topic] = payload
             self._resolve_state_waiters(topic, payload)
+
+    def _should_cache(self, name: str) -> bool:
+        """Whether a per-topic payload is worth retaining.
+
+        Anything that isn't a bridge topic lands in a cache keyed by topic, so
+        without a filter the keyspace is unbounded. Before the first
+        ``bridge/devices`` we don't know the roster yet, so accept everything;
+        after that, keep only names the bridge actually publishes (plus any name
+        a caller is currently waiting on).
+        """
+        if not self._primed.is_set():
+            return True
+        return name in self._known_names or name in self._state_waiters
+
+    def _prune_caches(self) -> None:
+        """Recompute the known-name set and drop cache entries that outlived it.
+
+        Renamed or removed devices would otherwise keep their state and
+        availability entries for the life of the process.
+        """
+        self._known_names = {
+            str(entry["friendly_name"])
+            for entry in (*self.devices, *self.groups)
+            if isinstance(entry, dict) and entry.get("friendly_name") is not None
+        }
+        if not self._known_names:
+            # An empty or malformed snapshot is not evidence that everything is
+            # gone — leave the caches alone rather than wiping them.
+            return
+        for cache in (self.device_state, self.availability):
+            for name in [n for n in cache if n not in self._known_names]:
+                del cache[name]
 
     def _resolve_response(self, topic: str, payload: Any) -> None:
         if not isinstance(payload, dict):
@@ -296,17 +335,39 @@ class Z2MClient:
             waiter = loop.create_future()
             self._state_waiters.setdefault(friendly_name, []).append(waiter)
 
-        await self._send(f"{friendly_name}/set", payload)
-
-        if waiter is None:
-            return {}
         try:
-            return await asyncio.wait_for(
-                waiter, timeout=self._settings.request_timeout
-            )
-        except asyncio.TimeoutError:
-            self._state_waiters.get(friendly_name, [])
-            return self.device_state.get(friendly_name, {}) or {}
+            await self._send(f"{friendly_name}/set", payload)
+
+            if waiter is None:
+                return {}
+            try:
+                return await asyncio.wait_for(
+                    waiter, timeout=self._settings.request_timeout
+                )
+            except asyncio.TimeoutError:
+                return self.device_state.get(friendly_name, {}) or {}
+        finally:
+            if waiter is not None:
+                self._discard_state_waiter(friendly_name, waiter)
+
+    def _discard_state_waiter(
+        self, friendly_name: str, waiter: asyncio.Future[dict[str, Any]]
+    ) -> None:
+        """Drop a waiter that will never be awaited again.
+
+        Without this a timed-out (or failed) ``set_state`` leaves its future in
+        ``_state_waiters`` forever — for a device that never reports again the
+        futures just accumulate.
+        """
+        waiters = self._state_waiters.get(friendly_name)
+        if waiters is None:
+            return
+        with contextlib.suppress(ValueError):
+            waiters.remove(waiter)
+        if not waiter.done():
+            waiter.cancel()
+        if not waiters:
+            self._state_waiters.pop(friendly_name, None)
 
     async def refresh_state(self, friendly_name: str) -> None:
         """Ask the device to re-report its state via ``<name>/get`` (best effort)."""
