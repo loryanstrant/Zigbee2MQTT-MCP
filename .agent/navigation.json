@@ -1,0 +1,422 @@
+{
+  "schema_version": "1.0",
+  "repository": "Zigbee2MQTT-MCP",
+  "identity": {
+    "description": "An [MCP](https://modelcontextprotocol.io) server for",
+    "default_branch": "main",
+    "languages": {
+      "Python": 10
+    },
+    "topics": [],
+    "licence": "MIT License",
+    "file_count": 23
+  },
+  "start_here": {
+    "readme": "README.md",
+    "agents_md": "AGENTS.md",
+    "entry_points": [
+      "zigbee2mqtt_mcp/__main__.py",
+      "zigbee2mqtt_mcp/server.py"
+    ],
+    "decision_records": [],
+    "build_config": [
+      "pyproject.toml"
+    ],
+    "source_roots": [
+      "zigbee2mqtt_mcp"
+    ]
+  },
+  "documentation": [
+    {
+      "path": "CHANGELOG.md",
+      "title": "Changelog",
+      "lines": 55,
+      "headings": [
+        {
+          "level": 2,
+          "text": "[2026.8.0] - 2026-08-30",
+          "anchor": "202680---2026-08-30"
+        },
+        {
+          "level": 3,
+          "text": "Fixed",
+          "anchor": "fixed"
+        },
+        {
+          "level": 3,
+          "text": "Added",
+          "anchor": "added"
+        },
+        {
+          "level": 2,
+          "text": "[2026.7.0] - 2026-07-11",
+          "anchor": "202670---2026-07-11"
+        }
+      ]
+    },
+    {
+      "path": "README.md",
+      "title": "Zigbee2MQTT-MCP",
+      "lines": 149,
+      "headings": [
+        {
+          "level": 2,
+          "text": "Why the frontend API?",
+          "anchor": "why-the-frontend-api"
+        },
+        {
+          "level": 2,
+          "text": "Tools",
+          "anchor": "tools"
+        },
+        {
+          "level": 2,
+          "text": "Configuration",
+          "anchor": "configuration"
+        },
+        {
+          "level": 3,
+          "text": "Why stateless HTTP is the default",
+          "anchor": "why-stateless-http-is-the-default"
+        },
+        {
+          "level": 2,
+          "text": "Running",
+          "anchor": "running"
+        },
+        {
+          "level": 3,
+          "text": "Docker (recommended)",
+          "anchor": "docker-recommended"
+        },
+        {
+          "level": 3,
+          "text": "Local (Python 3.11+)",
+          "anchor": "local-python-311"
+        },
+        {
+          "level": 3,
+          "text": "stdio (local MCP client, e.g. Claude Desktop)",
+          "anchor": "stdio-local-mcp-client-eg-claude-desktop"
+        },
+        {
+          "level": 2,
+          "text": "Development",
+          "anchor": "development"
+        },
+        {
+          "level": 2,
+          "text": "Security",
+          "anchor": "security"
+        },
+        {
+          "level": 2,
+          "text": "License",
+          "anchor": "license"
+        }
+      ]
+    },
+    {
+      "path": "SECURITY.md",
+      "title": "Security policy",
+      "lines": 25,
+      "headings": [
+        {
+          "level": 2,
+          "text": "Reporting a vulnerability",
+          "anchor": "reporting-a-vulnerability"
+        },
+        {
+          "level": 2,
+          "text": "Security model",
+          "anchor": "security-model"
+        }
+      ]
+    }
+  ],
+  "code": {
+    "source_roots": [
+      "zigbee2mqtt_mcp"
+    ],
+    "symbol_source": "repomix (tree-sitter signatures)",
+    "routes": [],
+    "files": [
+      {
+        "path": "zigbee2mqtt_mcp/__main__.py",
+        "symbols": [
+          {
+            "kind": "function",
+            "name": "main",
+            "parent": "",
+            "signature": "main() -> None"
+          }
+        ]
+      },
+      {
+        "path": "zigbee2mqtt_mcp/client.py",
+        "symbols": [
+          {
+            "kind": "class",
+            "name": "Z2MError",
+            "parent": "",
+            "signature": "class Z2MError(RuntimeError)"
+          },
+          {
+            "kind": "class",
+            "name": "Z2MNotReady",
+            "parent": "",
+            "signature": "class Z2MNotReady(Z2MError)"
+          },
+          {
+            "kind": "class",
+            "name": "Z2MClient",
+            "parent": "",
+            "signature": "class Z2MClient"
+          },
+          {
+            "kind": "function",
+            "name": "start",
+            "parent": "Z2MClient",
+            "signature": "start(self) -> None"
+          },
+          {
+            "kind": "function",
+            "name": "stop",
+            "parent": "Z2MClient",
+            "signature": "stop(self) -> None"
+          },
+          {
+            "kind": "function",
+            "name": "connected",
+            "parent": "Z2MClient",
+            "signature": "connected(self) -> bool"
+          },
+          {
+            "kind": "function",
+            "name": "primed",
+            "parent": "Z2MClient",
+            "signature": "primed(self) -> bool"
+          },
+          {
+            "kind": "function",
+            "name": "status",
+            "parent": "Z2MClient",
+            "signature": "status(self) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "refresh_state",
+            "parent": "Z2MClient",
+            "signature": "refresh_state(self, friendly_name: str) -> None"
+          },
+          {
+            "kind": "function",
+            "name": "find_device",
+            "parent": "Z2MClient",
+            "signature": "find_device(self, name_or_ieee: str) -> dict[str, Any] | None"
+          }
+        ]
+      },
+      {
+        "path": "zigbee2mqtt_mcp/server.py",
+        "symbols": [
+          {
+            "kind": "const",
+            "name": "INSTRUCTIONS",
+            "parent": "",
+            "signature": "INSTRUCTIONS = \"\"\"\\"
+          },
+          {
+            "kind": "function",
+            "name": "connection_status",
+            "parent": "",
+            "signature": "connection_status() -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "list_devices",
+            "parent": "",
+            "signature": "list_devices(detailed: bool = False, include_coordinator: bool = False) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "find_devices",
+            "parent": "",
+            "signature": "find_devices(query: str) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "get_device",
+            "parent": "",
+            "signature": "get_device(device: str) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "get_device_state",
+            "parent": "",
+            "signature": "get_device_state(device: str, refresh: bool = False) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "list_groups",
+            "parent": "",
+            "signature": "list_groups() -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "get_bridge_info",
+            "parent": "",
+            "signature": "get_bridge_info() -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "get_bridge_state",
+            "parent": "",
+            "signature": "get_bridge_state() -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "get_bridge_health",
+            "parent": "",
+            "signature": "get_bridge_health() -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "get_network_map",
+            "parent": "",
+            "signature": "get_network_map(map_type: str = \"raw\", routes: bool = False, timeout: float = 60.0) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "set_device_state",
+            "parent": "",
+            "signature": "set_device_state(device: str, state: dict[str, Any], wait: bool = True) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "permit_join",
+            "parent": "",
+            "signature": "permit_join(enable: bool, time: int | None = None, device: str | None = None) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "rename_device",
+            "parent": "",
+            "signature": "rename_device(current: str, new_name: str) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "remove_device",
+            "parent": "",
+            "signature": "remove_device(device: str, force: bool = False, block: bool = False) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "set_device_options",
+            "parent": "",
+            "signature": "set_device_options(device: str, options: dict[str, Any]) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "configure_device",
+            "parent": "",
+            "signature": "configure_device(device: str) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "ota_check",
+            "parent": "",
+            "signature": "ota_check(device: str) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "ota_update",
+            "parent": "",
+            "signature": "ota_update(device: str, timeout: float = 600.0) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "create_group",
+            "parent": "",
+            "signature": "create_group(name: str, group_id: int | None = None) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "remove_group",
+            "parent": "",
+            "signature": "remove_group(group: str, force: bool = False) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "group_add_member",
+            "parent": "",
+            "signature": "group_add_member(group: str, device: str) -> dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "group_remove_member",
+            "parent": "",
+            "signature": "group_remove_member(group: str, device: str) -> dict[str, Any]"
+          }
+        ]
+      },
+      {
+        "path": "zigbee2mqtt_mcp/settings.py",
+        "symbols": [
+          {
+            "kind": "class",
+            "name": "Settings",
+            "parent": "",
+            "signature": "class Settings(BaseSettings)"
+          },
+          {
+            "kind": "function",
+            "name": "websocket_url",
+            "parent": "Settings",
+            "signature": "websocket_url(self, *, redacted: bool = False) -> str"
+          },
+          {
+            "kind": "function",
+            "name": "allowed_hosts_list",
+            "parent": "Settings",
+            "signature": "allowed_hosts_list(self) -> list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "host_protection_value",
+            "parent": "Settings",
+            "signature": "host_protection_value(self) -> bool | Literal[\"auto\"]"
+          }
+        ]
+      }
+    ]
+  },
+  "tests": [
+    "tests/__init__.py",
+    "tests/test_client.py",
+    "tests/test_main.py",
+    "tests/test_server.py",
+    "tests/test_settings.py"
+  ],
+  "operations": [
+    ".dockerignore",
+    ".env.example",
+    ".github/workflows/ci.yml",
+    ".github/workflows/codeql.yml",
+    ".github/workflows/release.yml",
+    "Dockerfile",
+    "compose.yaml"
+  ],
+  "limitations": {
+    "unparsed_languages": [],
+    "excluded_dirs": [],
+    "code_map_truncated": false,
+    "code_map_symbols_capped": true,
+    "tracked_files_only": true
+  },
+  "generated": {
+    "source_commit": "2c7e407754d13ba8448a31cfa1622082be370bb6",
+    "content_hash": "4d5c3c04f75b4e87",
+    "generator": "navgen"
+  }
+}
